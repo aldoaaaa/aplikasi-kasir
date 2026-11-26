@@ -10,6 +10,38 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['kasir', 'admi
 $logo_url = '../assets/images/logo.jpg';
 $error = '';
 
+$gambar_kategori = [
+    'Penyetan Daun Jeruk' => '../assets/images/menus/penyetan.webp',
+    'Penyetan Nasi Putih' => '../assets/images/menus/penyetan.webp',
+    'Kebuli Ayam'         => '../assets/images/menus/kebuli.webp',
+    'Minuman'             => '../assets/images/menus/minuman.webp',
+    'Soto Ayam'           => '../assets/images/menus/soto.webp',
+];
+
+function getGambarMenu(array $menu, array $mapKategori): string
+{
+    $kat = trim((string) ($menu['kategori'] ?? ''));
+    if (isset($mapKategori[$kat])) {
+        return $mapKategori[$kat];
+    }
+
+    $lower = strtolower($kat);
+    if (strpos($lower, 'penyetan') !== false) {
+        return '../assets/images/menus/penyetan.webp';
+    }
+    if (strpos($lower, 'kebuli') !== false) {
+        return '../assets/images/menus/kebuli.webp';
+    }
+    if (strpos($lower, 'minuman') !== false) {
+        return '../assets/images/menus/minuman.webp';
+    }
+    if (strpos($lower, 'soto') !== false) {
+        return '../assets/images/menus/soto.webp';
+    }
+
+    return '';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['simpan_transaksi'])) {
     $nama_pelanggan = trim($_POST['nama_pelanggan'] ?? '') ?: 'Umum';
     $metode_bayar   = $_POST['metode_bayar'] ?? 'Tunai';
@@ -253,9 +285,9 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
             border-color: #fdba74;
         }
 
-        .menu-thumb {
-            width: 78px;
-            height: 78px;
+        .menu-thumb-box {
+            width: 82px;
+            height: 82px;
             border-radius: 12px;
             background: linear-gradient(135deg, #ffedd5, #fed7aa);
             color: var(--accent-hover);
@@ -265,7 +297,15 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
             font-weight: 800;
             font-size: 20px;
             flex-shrink: 0;
-            letter-spacing: 0.5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .menu-thumb-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .menu-info {
@@ -499,9 +539,18 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
                 <?php
                     $kata = preg_split('/\s+/', trim($m['nama_menu']));
                     $inisial = strtoupper(substr($kata[0] ?? 'M', 0, 1) . substr($kata[1] ?? '', 0, 1));
+                    $imgSrc = getGambarMenu($m, $gambar_kategori);
                 ?>
                 <div class="menu-card">
-                    <div class="menu-thumb"><?= htmlspecialchars($inisial) ?></div>
+                    <div class="menu-thumb-box">
+                        <?php if ($imgSrc !== ''): ?>
+                            <img src="<?= htmlspecialchars($imgSrc) ?>"
+                                 alt="<?= htmlspecialchars($m['nama_menu']) ?>"
+                                 onerror="this.remove(); this.parentElement.textContent='<?= htmlspecialchars($inisial) ?>';">
+                        <?php else: ?>
+                            <?= htmlspecialchars($inisial) ?>
+                        <?php endif; ?>
+                    </div>
                     <div class="menu-info">
                         <span class="menu-kat"><?= htmlspecialchars($m['kategori']) ?></span>
                         <h4 class="menu-title"><?= htmlspecialchars($m['nama_menu']) ?></h4>
