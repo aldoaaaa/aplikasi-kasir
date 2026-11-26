@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['kasir', 'admi
     exit;
 }
 
-$logo_url = '/aplikasi%20kasir%20awwalkitchen/assets/images/logo.jpg';
+$logo_url = '../assets/images/logo.jpg';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['simpan_transaksi'])) {
