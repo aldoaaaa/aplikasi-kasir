@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['simpan_transaksi'])) 
 }
 
 $kategori_aktif = $_GET['kategori'] ?? 'Semua';
-$stmtKat = $pdo->query('SELECT DISTINCT kategori FROM menus ORDER BY id ASC');
+$stmtKat = $pdo->query("SELECT DISTINCT kategori FROM menus WHERE kategori IS NOT NULL AND kategori != '' ORDER BY kategori ASC");
 $daftar_kategori = $stmtKat->fetchAll(PDO::FETCH_COLUMN);
 
 if ($kategori_aktif !== 'Semua') {
