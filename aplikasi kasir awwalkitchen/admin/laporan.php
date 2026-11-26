@@ -28,25 +28,219 @@ $total_periode = array_sum(array_column($rows, 'total_harga'));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Transaksi - AWWAL Kitchen & Eatery</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f8fafc; color: #0f172a; }
-        header { background: #1e293b; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
-        header a { color: #e2e8f0; text-decoration: none; margin-left: 16px; font-size: 14px; }
-        .container { max-width: 1100px; margin: 24px auto; padding: 0 20px; }
-        .filter { background: #fff; padding: 14px; border-radius: 8px; margin-bottom: 18px; display: flex; gap: 10px; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        th, td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 14px; }
-        th { background: #f1f5f9; }
+        :root {
+            --bg-cream: #f7efe5;
+            --card-bg: #ffffff;
+            --navy: #1e293b;
+            --navy-soft: #334155;
+            --accent: #ea580c;
+            --accent-hover: #c2410c;
+            --accent-soft: #ffedd5;
+            --border: #e6d8c7;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: var(--bg-cream);
+            color: var(--text);
+        }
+
+        header {
+            background: var(--navy);
+            color: #fff;
+            padding: 13px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+        }
+
+        .brand-text {
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .brand-sub {
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            color: #f8fafc;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+
+        .filter {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 6px 18px rgba(30, 41, 59, 0.05);
+        }
+
+        .filter label {
+            font-size: 14px;
+            color: var(--navy-soft);
+        }
+
+        .filter input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text);
+            background: #fff;
+        }
+
+        .filter input[type="date"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.14);
+        }
+
+        .filter button {
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.24);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .filter button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.32);
+        }
+
+        .total-pill {
+            margin-left: auto;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: var(--accent-hover);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .table-wrap {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(30, 41, 59, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f1e6d8;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #fff7ed;
+            color: var(--navy-soft);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #fffaf4;
+        }
+
+        .metode-badge {
+            display: inline-block;
+            background: var(--accent-soft);
+            color: var(--accent-hover);
+            font-weight: 700;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .struk-link {
+            color: var(--accent-hover);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .struk-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .total-pill {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 <header>
-    <div><strong>AWWAL Kitchen & Eatery</strong> — Laporan Transaksi</div>
-    <div>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="menu.php">Kelola Menu</a>
-        <a href="laporan.php">Laporan</a>
-        <a href="../kasir/transaksi.php">Buka Kasir</a>
-        <a href="../logout.php">Logout</a>
+    <div class="brand-text">
+        <strong>AWWAL Kitchen & Eatery</strong>
+        <span class="brand-sub">— Laporan Transaksi</span>
+    </div>
+    <div class="nav-links">
+        <a class="nav-btn" href="dashboard.php">Dashboard</a>
+        <a class="nav-btn" href="menu.php">Kelola Menu</a>
+        <a class="nav-btn active" href="laporan.php">Laporan</a>
+        <a class="nav-btn" href="../kasir/transaksi.php">Buka Kasir</a>
+        <a class="nav-btn" href="../logout.php">Logout</a>
     </div>
 </header>
 
@@ -55,39 +249,41 @@ $total_periode = array_sum(array_column($rows, 'total_harga'));
         <label for="tanggal"><strong>Pilih Tanggal:</strong></label>
         <input type="date" id="tanggal" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>">
         <button type="submit">Tampilkan</button>
-        <span style="margin-left:auto;"><strong>Total Tanggal Ini: Rp <?= number_format($total_periode, 0, ',', '.') ?></strong></span>
+        <span class="total-pill">Total Tanggal Ini: Rp <?= number_format($total_periode, 0, ',', '.') ?></span>
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Kode</th>
-                <th>Waktu</th>
-                <th>Kasir</th>
-                <th>Pelanggan</th>
-                <th>Metode</th>
-                <th>Total</th>
-                <th>Struk</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($rows)): ?>
-                <tr><td colspan="7">Tidak ada transaksi pada tanggal ini.</td></tr>
-            <?php else: ?>
-                <?php foreach ($rows as $r): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($r['kode_transaksi']) ?></td>
-                        <td><?= htmlspecialchars($r['created_at']) ?></td>
-                        <td><?= htmlspecialchars($r['nama_kasir']) ?></td>
-                        <td><?= htmlspecialchars($r['nama_pelanggan']) ?></td>
-                        <td><?= htmlspecialchars($r['metode_bayar']) ?></td>
-                        <td>Rp <?= number_format((int) $r['total_harga'], 0, ',', '.') ?></td>
-                        <td><a href="../kasir/struk.php?id=<?= (int) $r['id'] ?>" target="_blank">Lihat Struk</a></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kode</th>
+                    <th>Waktu</th>
+                    <th>Kasir</th>
+                    <th>Pelanggan</th>
+                    <th>Metode</th>
+                    <th>Total</th>
+                    <th>Struk</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($rows)): ?>
+                    <tr><td colspan="7">Tidak ada transaksi pada tanggal ini.</td></tr>
+                <?php else: ?>
+                    <?php foreach ($rows as $r): ?>
+                        <tr>
+                            <td><strong><?= htmlspecialchars($r['kode_transaksi']) ?></strong></td>
+                            <td><?= htmlspecialchars($r['created_at']) ?></td>
+                            <td><?= htmlspecialchars($r['nama_kasir']) ?></td>
+                            <td><?= htmlspecialchars($r['nama_pelanggan']) ?></td>
+                            <td><span class="metode-badge"><?= htmlspecialchars($r['metode_bayar']) ?></span></td>
+                            <td><strong>Rp <?= number_format((int) $r['total_harga'], 0, ',', '.') ?></strong></td>
+                            <td><a class="struk-link" href="../kasir/struk.php?id=<?= (int) $r['id'] ?>" target="_blank">Lihat Struk</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
