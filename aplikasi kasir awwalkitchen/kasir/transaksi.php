@@ -21,25 +21,41 @@ $gambar_kategori = [
 function getGambarMenu(array $menu, array $mapKategori): string
 {
     $kat = trim((string) ($menu['kategori'] ?? ''));
+    $file = '';
+
     if (isset($mapKategori[$kat])) {
-        return $mapKategori[$kat];
+        $file = basename($mapKategori[$kat]);
+    } else {
+        $lower = strtolower($kat);
+        if (strpos($lower, 'penyetan') !== false) {
+            $file = 'ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp';
+        } elseif (strpos($lower, 'kebuli') !== false) {
+            $file = 'nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp';
+        } elseif (strpos($lower, 'minuman') !== false) {
+            $file = 'pexels-photo-792613.webp';
+        } elseif (strpos($lower, 'soto') !== false) {
+            $file = 'soto-ayam1.webp';
+        }
     }
 
-    $lower = strtolower($kat);
-    if (strpos($lower, 'penyetan') !== false) {
-        return '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp';
-    }
-    if (strpos($lower, 'kebuli') !== false) {
-        return '../assets/images/nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp';
-    }
-    if (strpos($lower, 'minuman') !== false) {
-        return '../assets/images/pexels-photo-792613.webp';
-    }
-    if (strpos($lower, 'soto') !== false) {
-        return '../assets/images/soto-ayam1.webp';
+    if ($file === '') {
+        return '';
     }
 
-    return '';
+    // Cek beberapa kemungkinan letak folder assets/images relatif dari kasir/transaksi.php
+    $kandidatRelatif = [
+        '../assets/images/' . $file,
+        '../../assets/images/' . $file,
+    ];
+
+    foreach ($kandidatRelatif as $relPath) {
+        $fsPath = __DIR__ . '/' . $relPath;
+        if (is_file($fsPath)) {
+            return $relPath;
+        }
+    }
+
+    return '../assets/images/' . $file;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['simpan_transaksi'])) {
