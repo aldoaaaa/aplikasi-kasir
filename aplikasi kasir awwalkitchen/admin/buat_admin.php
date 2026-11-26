@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../config/database.php';
 
 $nama = 'Admin Awwal';
-$username = 'username_baru';
-$passwordAsli = 'password_baru';
+$username = 'kasir awwal';
+$passwordAsli = '112233';
 $role = 'admin';
 
 $hash = password_hash($passwordAsli, PASSWORD_DEFAULT);
