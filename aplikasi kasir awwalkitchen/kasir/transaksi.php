@@ -24,43 +24,59 @@ $gambar_kategori = [
 function getGambarMenu(array $menu, array $mapKategori): string
 {
     $kat = trim((string) ($menu['kategori'] ?? ''));
-    $file = '';
+    $lower = strtolower($kat);
 
-    if (isset($mapKategori[$kat])) {
-        $file = basename($mapKategori[$kat]);
-    } else {
-        $lower = strtolower($kat);
-        if (strpos($lower, 'camilan') !== false) {
-            $file = 'kreasi-camilan-dari-kentang-paling-enak-camilan-dari-kentang-resep-camilan-kentang-cara-membuat-camilan-kentang-resep-french-fries-kentang-goreng-9cde86371d7fc78c91ae80a6ffab250e-733d02774b17fbcd87af1ce2143ce28a.webp';
-        } elseif (strpos($lower, 'lauk') !== false || strpos($lower, 'penyetan') !== false) {
-            $file = 'ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp';
-        } elseif (strpos($lower, 'rame') !== false || strpos($lower, 'paket') !== false) {
-            $file = 'paket-rame-rame.webp';
-        } elseif (strpos($lower, 'kebuli') !== false) {
-            $file = 'nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp';
-        } elseif (strpos($lower, 'minuman') !== false) {
-            $file = 'pexels-photo-792613.webp';
-        } elseif (strpos($lower, 'soto') !== false) {
-            $file = 'soto-ayam1.webp';
-        }
+    $kandidatFile = [];
+
+    if (strpos($lower, 'rame') !== false || strpos($lower, 'paket') !== false) {
+        $kandidatFile = [
+            'paket-rame-rame.webp',
+            'paket rame rame.webp',
+            'paket_rame_rame.webp',
+            'paket-rame-rame.jpg',
+            'paket rame rame.jpg',
+            'paket-rame-rame.png',
+            'paket rame rame.png',
+        ];
+    } elseif (isset($mapKategori[$kat])) {
+        $kandidatFile = [basename($mapKategori[$kat])];
+    } elseif (strpos($lower, 'camilan') !== false) {
+        $kandidatFile = [
+            'kreasi-camilan-dari-kentang-paling-enak-camilan-dari-kentang-resep-camilan-kentang-cara-membuat-camilan-kentang-resep-french-fries-kentang-goreng-9cde86371d7fc78c91ae80a6ffab250e-733d02774b17fbcd87af1ce2143ce28a.webp',
+        ];
+    } elseif (strpos($lower, 'lauk') !== false || strpos($lower, 'penyetan') !== false) {
+        $kandidatFile = [
+            'ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp',
+        ];
+    } elseif (strpos($lower, 'kebuli') !== false) {
+        $kandidatFile = [
+            'nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp',
+        ];
+    } elseif (strpos($lower, 'minuman') !== false) {
+        $kandidatFile = [
+            'pexels-photo-792613.webp',
+        ];
+    } elseif (strpos($lower, 'soto') !== false) {
+        $kandidatFile = [
+            'soto-ayam1.webp',
+        ];
     }
 
-    if ($file === '') {
+    if (empty($kandidatFile)) {
         return '';
     }
 
-    $kandidatRelatif = [
-        '../assets/images/' . $file,
-        '../../assets/images/' . $file,
-    ];
+    $folderRelatif = ['../assets/images/', '../../assets/images/'];
 
-    foreach ($kandidatRelatif as $relPath) {
-        if (is_file(__DIR__ . '/' . $relPath)) {
-            return $relPath;
+    foreach ($folderRelatif as $folder) {
+        foreach ($kandidatFile as $file) {
+            if (is_file(__DIR__ . '/' . $folder . $file)) {
+                return $folder . rawurlencode($file);
+            }
         }
     }
 
-    return '../assets/images/' . $file;
+    return '../assets/images/' . rawurlencode($kandidatFile[0]);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['simpan_transaksi'])) {
