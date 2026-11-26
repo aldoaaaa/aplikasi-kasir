@@ -108,28 +108,359 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kasir POS - AWWAL Kitchen & Eatery</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f8fafc; color: #0f172a; }
-        header { background: #1e293b; color: #fff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .brand { display: flex; align-items: center; gap: 10px; }
-        .logo-badge { background: #fff; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; }
-        .logo-badge img { height: 28px; width: auto; display: block; }
-        header a { color: #e2e8f0; text-decoration: none; margin-left: 14px; font-size: 14px; }
-        .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 20px; max-width: 1300px; margin: auto; }
-        .filter-bar { margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .filter-btn { padding: 7px 12px; border-radius: 20px; border: 1px solid #cbd5e1; background: #fff; text-decoration: none; color: #334155; font-size: 13px; }
-        .filter-btn.active { background: #1e293b; color: #fff; border-color: #1e293b; }
-        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        th, td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 14px; }
-        th { background: #f1f5f9; }
-        .qty-input { width: 65px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; }
-        .summary-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); position: sticky; top: 20px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 13px; margin-bottom: 4px; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-        .total-display { font-size: 22px; font-weight: bold; margin: 12px 0; color: #0f172a; }
-        .btn-submit { width: 100%; padding: 12px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; }
-        .error { background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+        :root {
+            --bg-cream: #f7efe5;
+            --card-bg: #ffffff;
+            --navy: #1e293b;
+            --navy-soft: #334155;
+            --accent: #ea580c;
+            --accent-hover: #c2410c;
+            --accent-soft: #ffedd5;
+            --border: #e6d8c7;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: var(--bg-cream);
+            color: var(--text);
+        }
+
+        header {
+            background: var(--navy);
+            color: #fff;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-badge {
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .logo-badge img {
+            height: 28px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            color: #f8fafc;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2.1fr 1fr;
+            gap: 22px;
+            padding: 22px;
+            max-width: 1360px;
+            margin: auto;
+            align-items: start;
+        }
+
+        .filter-bar {
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            text-decoration: none;
+            color: var(--navy-soft);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(30, 41, 59, 0.05);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(30, 41, 59, 0.08);
+            border-color: #fdba74;
+        }
+
+        .menu-thumb {
+            width: 78px;
+            height: 78px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffedd5, #fed7aa);
+            color: var(--accent-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .menu-kat {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-hover);
+            background: var(--accent-soft);
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 5px;
+        }
+
+        .menu-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0 0 6px;
+            line-height: 1.35;
+        }
+
+        .menu-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .menu-price {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .qty-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 999px;
+            padding: 3px 6px;
+        }
+
+        .qty-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: background 0.15s ease;
+        }
+
+        .qty-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .qty-input {
+            width: 38px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text);
+            padding: 2px 0;
+        }
+
+        .qty-input:focus {
+            outline: none;
+        }
+
+        .summary-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 22px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(30, 41, 59, 0.08);
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-box h3 {
+            margin: 0 0 16px;
+            font-size: 18px;
+            color: var(--navy);
+            border-bottom: 2px solid var(--bg-cream);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: var(--navy-soft);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.14);
+        }
+
+        .total-card {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin: 14px 0;
+        }
+
+        .total-display {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-hover);
+        }
+
+        .kembali-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin: 12px 0 16px;
+            padding-top: 8px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px 16px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.28);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(234, 88, 12, 0.36);
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1024px) {
+            .container { grid-template-columns: 1fr; }
+            .summary-box { position: static; }
+        }
+
+        @media (max-width: 640px) {
+            .menu-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -138,13 +469,16 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
         <span class="logo-badge">
             <img src="<?= htmlspecialchars($logo_url) ?>" alt="AWWAL Kitchen & Eatery">
         </span>
-        <strong>AWWAL Kitchen & Eatery</strong> — Kasir: <?= htmlspecialchars($_SESSION['nama']) ?>
+        <div>
+            <strong>AWWAL Kitchen & Eatery</strong>
+            <span style="font-size: 13px; color: #cbd5e1;"> — Kasir: <?= htmlspecialchars($_SESSION['nama']) ?></span>
+        </div>
     </div>
-    <div>
+    <div class="nav-links">
         <?php if ($_SESSION['role'] === 'admin'): ?>
-            <a href="../admin/dashboard.php">Dashboard Admin</a>
+            <a class="nav-btn" href="../admin/dashboard.php">Dashboard Admin</a>
         <?php endif; ?>
-        <a href="../logout.php">Logout</a>
+        <a class="nav-btn" href="../logout.php">Logout</a>
     </div>
 </header>
 
@@ -160,29 +494,31 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Menu</th>
-                    <th>Kategori</th>
-                    <th>Harga</th>
-                    <th>Jumlah</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($menus as $m): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($m['nama_menu']) ?></td>
-                        <td><?= htmlspecialchars($m['kategori']) ?></td>
-                        <td>Rp <?= number_format($m['harga'], 0, ',', '.') ?></td>
-                        <td>
-                            <input type="number" min="0" value="0" name="qty[<?= $m['id'] ?>]"
-                                   data-harga="<?= $m['harga'] ?>" class="qty-input" oninput="hitungTotal()">
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="menu-grid">
+            <?php foreach ($menus as $m): ?>
+                <?php
+                    $kata = preg_split('/\s+/', trim($m['nama_menu']));
+                    $inisial = strtoupper(substr($kata[0] ?? 'M', 0, 1) . substr($kata[1] ?? '', 0, 1));
+                ?>
+                <div class="menu-card">
+                    <div class="menu-thumb"><?= htmlspecialchars($inisial) ?></div>
+                    <div class="menu-info">
+                        <span class="menu-kat"><?= htmlspecialchars($m['kategori']) ?></span>
+                        <h4 class="menu-title"><?= htmlspecialchars($m['nama_menu']) ?></h4>
+                        <div class="menu-bottom">
+                            <span class="menu-price">Rp <?= number_format($m['harga'], 0, ',', '.') ?></span>
+                            <div class="qty-control">
+                                <button type="button" class="qty-btn" onclick="ubahQty(<?= (int) $m['id'] ?>, -1)">-</button>
+                                <input type="number" min="0" value="0" id="qty_<?= (int) $m['id'] ?>"
+                                       name="qty[<?= (int) $m['id'] ?>]" data-harga="<?= (int) $m['harga'] ?>"
+                                       class="qty-input" oninput="hitungTotal()">
+                                <button type="button" class="qty-btn" onclick="ubahQty(<?= (int) $m['id'] ?>, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 
     <div class="summary-box">
@@ -205,14 +541,20 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
             </select>
         </div>
 
-        <div class="total-display">Total: <span id="totalText">Rp 0</span></div>
+        <div class="total-card">
+            <div style="font-size: 12px; color: #7c2d12; font-weight: 700; margin-bottom: 2px;">Total Pembayaran</div>
+            <div class="total-display"><span id="totalText">Rp 0</span></div>
+        </div>
 
         <div class="form-group">
             <label for="bayar">Nominal Bayar (Rp)</label>
             <input type="number" id="bayar" name="bayar" min="0" value="0" oninput="hitungTotal()" required>
         </div>
 
-        <p><strong>Kembalian:</strong> <span id="kembaliText">Rp 0</span></p>
+        <div class="kembali-row">
+            <strong>Kembalian</strong>
+            <strong id="kembaliText" style="color: #15803d;">Rp 0</strong>
+        </div>
 
         <button type="submit" name="simpan_transaksi" class="btn-submit">Simpan & Cetak Struk</button>
     </div>
@@ -222,6 +564,14 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
 <script>
 function formatRp(num) {
     return 'Rp ' + Math.max(0, num).toLocaleString('id-ID');
+}
+
+function ubahQty(menuId, delta) {
+    const input = document.getElementById('qty_' + menuId);
+    if (!input) return;
+    const sekarang = parseInt(input.value) || 0;
+    input.value = Math.max(0, sekarang + delta);
+    hitungTotal();
 }
 
 function hitungTotal() {
