@@ -11,6 +11,9 @@ $logo_url = '../assets/images/logo.jpg';
 $error = '';
 
 $gambar_kategori = [
+    'Camilan'             => '../assets/images/kreasi-camilan-dari-kentang-paling-enak-camilan-dari-kentang-resep-camilan-kentang-cara-membuat-camilan-kentang-resep-french-fries-kentang-goreng-9cde86371d7fc78c91ae80a6ffab250e-733d02774b17fbcd87af1ce2143ce28a.webp',
+    'Lauk Tambahan'       => '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp',
+    'Paket Rame-Rame'     => '../assets/images/paket-rame-rame.webp',
     'Penyetan Daun Jeruk' => '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp',
     'Penyetan Nasi Putih' => '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp',
     'Kebuli Ayam'         => '../assets/images/nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp',
@@ -27,8 +30,12 @@ function getGambarMenu(array $menu, array $mapKategori): string
         $file = basename($mapKategori[$kat]);
     } else {
         $lower = strtolower($kat);
-        if (strpos($lower, 'penyetan') !== false) {
+        if (strpos($lower, 'camilan') !== false) {
+            $file = 'kreasi-camilan-dari-kentang-paling-enak-camilan-dari-kentang-resep-camilan-kentang-cara-membuat-camilan-kentang-resep-french-fries-kentang-goreng-9cde86371d7fc78c91ae80a6ffab250e-733d02774b17fbcd87af1ce2143ce28a.webp';
+        } elseif (strpos($lower, 'lauk') !== false || strpos($lower, 'penyetan') !== false) {
             $file = 'ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp';
+        } elseif (strpos($lower, 'rame') !== false || strpos($lower, 'paket') !== false) {
+            $file = 'paket-rame-rame.webp';
         } elseif (strpos($lower, 'kebuli') !== false) {
             $file = 'nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp';
         } elseif (strpos($lower, 'minuman') !== false) {
@@ -42,15 +49,13 @@ function getGambarMenu(array $menu, array $mapKategori): string
         return '';
     }
 
-    // Cek beberapa kemungkinan letak folder assets/images relatif dari kasir/transaksi.php
     $kandidatRelatif = [
         '../assets/images/' . $file,
         '../../assets/images/' . $file,
     ];
 
     foreach ($kandidatRelatif as $relPath) {
-        $fsPath = __DIR__ . '/' . $relPath;
-        if (is_file($fsPath)) {
+        if (is_file(__DIR__ . '/' . $relPath)) {
             return $relPath;
         }
     }
