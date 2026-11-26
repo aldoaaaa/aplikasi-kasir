@@ -11,11 +11,11 @@ $logo_url = '../assets/images/logo.jpg';
 $error = '';
 
 $gambar_kategori = [
-    'Penyetan Daun Jeruk' => '../assets/images/menus/penyetan.webp',
-    'Penyetan Nasi Putih' => '../assets/images/menus/penyetan.webp',
-    'Kebuli Ayam'         => '../assets/images/menus/kebuli.webp',
-    'Minuman'             => '../assets/images/menus/minuman.webp',
-    'Soto Ayam'           => '../assets/images/menus/soto.webp',
+    'Penyetan Daun Jeruk' => '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp',
+    'Penyetan Nasi Putih' => '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp',
+    'Kebuli Ayam'         => '../assets/images/nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp',
+    'Minuman'             => '../assets/images/pexels-photo-792613.webp',
+    'Soto Ayam'           => '../assets/images/soto-ayam1.webp',
 ];
 
 function getGambarMenu(array $menu, array $mapKategori): string
@@ -27,16 +27,16 @@ function getGambarMenu(array $menu, array $mapKategori): string
 
     $lower = strtolower($kat);
     if (strpos($lower, 'penyetan') !== false) {
-        return '../assets/images/menus/penyetan.webp';
+        return '../assets/images/ayam-penyet-atau-penyetan-ayam-ayam-goreng-disajikan-dengan-sambal-pedas_511235-10920.webp';
     }
     if (strpos($lower, 'kebuli') !== false) {
-        return '../assets/images/menus/kebuli.webp';
+        return '../assets/images/nasi-kebuli-ayam-chicken-rice-signature-dish-combines-deliciousnees-spiced-perfectly-cooked-various-417600013.webp';
     }
     if (strpos($lower, 'minuman') !== false) {
-        return '../assets/images/menus/minuman.webp';
+        return '../assets/images/pexels-photo-792613.webp';
     }
     if (strpos($lower, 'soto') !== false) {
-        return '../assets/images/menus/soto.webp';
+        return '../assets/images/soto-ayam1.webp';
     }
 
     return '';
