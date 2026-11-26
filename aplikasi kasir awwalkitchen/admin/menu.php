@@ -124,38 +124,272 @@ $menus = $pdo->query('SELECT * FROM menus ORDER BY id ASC')->fetchAll(PDO::FETCH
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Menu - AWWAL Kitchen & Eatery</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f8fafc; color: #0f172a; }
-        header { background: #1e293b; color: #fff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .brand { display: flex; align-items: center; gap: 10px; }
-        .logo-badge { background: #fff; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; }
-        .logo-badge img { height: 28px; width: auto; display: block; }
-        header a { color: #e2e8f0; text-decoration: none; margin-left: 16px; font-size: 14px; }
-        .container { max-width: 1150px; margin: 24px auto; padding: 0 20px; }
-        .box { background: #fff; padding: 18px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        .form-row { display: grid; grid-template-columns: 2fr 1.5fr 1fr auto; gap: 10px; align-items: end; }
-        .edit-row { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr auto auto; gap: 10px; align-items: end; }
-        label { display: block; font-size: 13px; margin-bottom: 4px; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-        button { padding: 9px 16px; background: #1e293b; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #0f172a; }
-        .btn-save { background: #15803d; }
-        .btn-save:hover { background: #166534; }
-        .btn-cancel { display: inline-block; padding: 9px 14px; background: #e2e8f0; color: #1e293b; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-        th, td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 14px; }
-        th { background: #f1f5f9; }
-        .badge-ok { color: #15803d; font-weight: bold; }
-        .badge-no { color: #b91c1c; font-weight: bold; }
-        .aksi-link { text-decoration: none; font-weight: bold; font-size: 13px; }
-        .aksi-edit { color: #1d4ed8; }
-        .aksi-status { color: #0f172a; }
+        :root {
+            --bg-cream: #f7efe5;
+            --card-bg: #ffffff;
+            --navy: #1e293b;
+            --navy-soft: #334155;
+            --accent: #ea580c;
+            --accent-hover: #c2410c;
+            --accent-soft: #ffedd5;
+            --border: #e6d8c7;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: var(--bg-cream);
+            color: var(--text);
+        }
+
+        header {
+            background: var(--navy);
+            color: #fff;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-badge {
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .logo-badge img {
+            height: 28px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            color: #f8fafc;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+
+        .box {
+            background: var(--card-bg);
+            padding: 20px 22px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 22px;
+            box-shadow: 0 6px 18px rgba(30, 41, 59, 0.05);
+        }
+
+        .box h3 {
+            margin: 0 0 14px;
+            font-size: 17px;
+            color: var(--navy);
+        }
+
+        .edit-box {
+            border: 2px solid var(--accent);
+            background: #fffdfb;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .edit-row {
+            display: grid;
+            grid-template-columns: 2fr 1.4fr 1fr 1fr auto auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: var(--navy-soft);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.14);
+        }
+
+        button {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.24);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(234, 88, 12, 0.32);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            box-shadow: 0 4px 10px rgba(21, 128, 61, 0.24);
+        }
+
+        .btn-cancel {
+            display: inline-block;
+            padding: 10px 14px;
+            background: #f1f5f9;
+            color: var(--navy);
+            border: 1px solid #cbd5e1;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .table-wrap {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(30, 41, 59, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f1e6d8;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #fff7ed;
+            color: var(--navy-soft);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #fffaf4;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-ok {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-no {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .aksi-link {
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .aksi-link:hover {
+            text-decoration: underline;
+        }
+
+        .aksi-edit { color: #ea580c; }
+        .aksi-status { color: #1e293b; }
         .aksi-hapus { color: #b91c1c; }
-        .alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
         .alert-warning { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
         .alert-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
         .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-        .alert-info { background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
-        @media (max-width: 900px) {
+        .alert-info { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
+
+        @media (max-width: 960px) {
             .form-row, .edit-row { grid-template-columns: 1fr; }
         }
     </style>
@@ -166,14 +400,15 @@ $menus = $pdo->query('SELECT * FROM menus ORDER BY id ASC')->fetchAll(PDO::FETCH
         <span class="logo-badge">
             <img src="../assets/images/logo.jpg" alt="AWWAL Kitchen & Eatery">
         </span>
-        <strong>AWWAL Kitchen & Eatery</strong> — Kelola Menu
+        <strong>AWWAL Kitchen & Eatery</strong>
+        <span style="font-size: 13px; color: #cbd5e1;">— Kelola Menu</span>
     </div>
-    <div>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="menu.php">Kelola Menu</a>
-        <a href="laporan.php">Laporan</a>
-        <a href="../kasir/transaksi.php">Buka Kasir</a>
-        <a href="../logout.php">Logout</a>
+    <div class="nav-links">
+        <a class="nav-btn" href="dashboard.php">Dashboard</a>
+        <a class="nav-btn active" href="menu.php">Kelola Menu</a>
+        <a class="nav-btn" href="laporan.php">Laporan</a>
+        <a class="nav-btn" href="../kasir/transaksi.php">Buka Kasir</a>
+        <a class="nav-btn" href="../logout.php">Logout</a>
     </div>
 </header>
 
@@ -183,7 +418,7 @@ $menus = $pdo->query('SELECT * FROM menus ORDER BY id ASC')->fetchAll(PDO::FETCH
     <?php endif; ?>
 
     <?php if ($edit_menu !== null): ?>
-        <div class="box" style="border: 2px solid #1d4ed8;">
+        <div class="box edit-box">
             <h3>Edit Menu (ID #<?= (int) $edit_menu['id'] ?>)</h3>
             <form method="POST" class="edit-row">
                 <input type="hidden" name="id" value="<?= (int) $edit_menu['id'] ?>">
@@ -246,38 +481,40 @@ $menus = $pdo->query('SELECT * FROM menus ORDER BY id ASC')->fetchAll(PDO::FETCH
         </div>
     <?php endif; ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nama Menu</th>
-                <th>Kategori</th>
-                <th>Harga</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($menus as $m): ?>
+    <div class="table-wrap">
+        <table>
+            <thead>
                 <tr>
-                    <td><?= (int) $m['id'] ?></td>
-                    <td><?= htmlspecialchars($m['nama_menu']) ?></td>
-                    <td><?= htmlspecialchars($m['kategori']) ?></td>
-                    <td>Rp <?= number_format((int) $m['harga'], 0, ',', '.') ?></td>
-                    <td>
-                        <span class="<?= $m['status'] === 'tersedia' ? 'badge-ok' : 'badge-no' ?>">
-                            <?= strtoupper(htmlspecialchars($m['status'])) ?>
-                        </span>
-                    </td>
-                    <td>
-                        <a href="?edit=<?= (int) $m['id'] ?>" class="aksi-link aksi-edit">Edit</a> |
-                        <a href="?toggle_status=<?= (int) $m['id'] ?>" class="aksi-link aksi-status">Ubah Status</a> |
-                        <a href="?hapus=<?= (int) $m['id'] ?>" class="aksi-link aksi-hapus" onclick="return confirm('Hapus menu ini?')">Hapus</a>
-                    </td>
+                    <th>ID</th>
+                    <th>Nama Menu</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($menus as $m): ?>
+                    <tr>
+                        <td><?= (int) $m['id'] ?></td>
+                        <td><strong><?= htmlspecialchars($m['nama_menu']) ?></strong></td>
+                        <td><?= htmlspecialchars($m['kategori']) ?></td>
+                        <td><strong>Rp <?= number_format((int) $m['harga'], 0, ',', '.') ?></strong></td>
+                        <td>
+                            <span class="status-pill <?= $m['status'] === 'tersedia' ? 'badge-ok' : 'badge-no' ?>">
+                                <?= strtoupper(htmlspecialchars($m['status'])) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="?edit=<?= (int) $m['id'] ?>" class="aksi-link aksi-edit">Edit</a> |
+                            <a href="?toggle_status=<?= (int) $m['id'] ?>" class="aksi-link aksi-status">Ubah Status</a> |
+                            <a href="?hapus=<?= (int) $m['id'] ?>" class="aksi-link aksi-hapus" onclick="return confirm('Hapus menu ini?')">Hapus</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
