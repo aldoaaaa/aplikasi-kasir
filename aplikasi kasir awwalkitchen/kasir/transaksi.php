@@ -597,7 +597,7 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
                                 <button type="button" class="qty-btn" onclick="ubahQty(<?= (int) $m['id'] ?>, -1)">-</button>
                                 <input type="number" min="0" value="0" id="qty_<?= (int) $m['id'] ?>"
                                        name="qty[<?= (int) $m['id'] ?>]" data-harga="<?= (int) $m['harga'] ?>"
-                                       class="qty-input" oninput="hitungTotal()">
+                                       class="qty-input">
                                 <button type="button" class="qty-btn" onclick="ubahQty(<?= (int) $m['id'] ?>, 1)">+</button>
                             </div>
                         </div>
@@ -648,6 +648,22 @@ $menus = $stmtMenu->fetchAll(PDO::FETCH_ASSOC);
 </form>
 
 <script>
+const STORAGE_KEY = 'awwal_pos_cart_v1';
+
+function getSavedCart() {
+    try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveCart(cart) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+    } catch (e) {}
+}
+
 function formatRp(num) {
     return 'Rp ' + Math.max(0, num).toLocaleString('id-ID');
 }
@@ -655,22 +671,100 @@ function formatRp(num) {
 function ubahQty(menuId, delta) {
     const input = document.getElementById('qty_' + menuId);
     if (!input) return;
-    const sekarang = parseInt(input.value) || 0;
-    input.value = Math.max(0, sekarang + delta);
+    const sekarang = parseInt(input.value, 10) || 0;
+    const nilaiBaru = Math.max(0, sekarang + delta);
+    input.value = nilaiBaru;
+
+    const cart = getSavedCart();
+    if (nilaiBaru > 0) {
+        cart[String(menuId)] = {
+            qty: nilaiBaru,
+            harga: parseInt(input.dataset.harga, 10) || 0
+        };
+    } else {
+        delete cart[String(menuId)];
+    }
+    saveCart(cart);
     hitungTotal();
 }
 
 function hitungTotal() {
-    let total = 0;
+    const cart = getSavedCart();
+
     document.querySelectorAll('.qty-input').forEach(inp => {
-        const qty = parseInt(inp.value) || 0;
-        const harga = parseInt(inp.dataset.harga) || 0;
-        total += qty * harga;
+        const idMatch = inp.id.replace('qty_', '');
+        if (cart[idMatch] && cart[idMatch].qty > 0) {
+            inp.value = cart[idMatch].qty;
+        }
     });
-    const bayar = parseInt(document.getElementById('bayar').value) || 0;
+
+    let total = 0;
+    Object.keys(cart).forEach(menuId => {
+        const item = cart[menuId];
+        const qty = parseInt(item.qty, 10) || 0;
+        const harga = parseInt(item.harga, 10) || 0;
+        if (qty > 0) {
+            total += qty * harga;
+        }
+    });
+
+    const bayar = parseInt(document.getElementById('bayar').value, 10) || 0;
     document.getElementById('totalText').textContent = formatRp(total);
     document.getElementById('kembaliText').textContent = formatRp(bayar - total);
 }
+
+document.getElementById('posForm').addEventListener('submit', function() {
+    const cart = getSavedCart();
+    const form = this;
+
+    document.querySelectorAll('.qty-input').forEach(inp => {
+        const menuId = inp.id.replace('qty_', '');
+        const qty = parseInt(inp.value, 10) || 0;
+        if (qty > 0) {
+            cart[menuId] = {
+                qty: qty,
+                harga: parseInt(inp.dataset.harga, 10) || 0
+            };
+        } else {
+            delete cart[menuId];
+        }
+    });
+
+    Object.keys(cart).forEach(menuId => {
+        const qty = parseInt(cart[menuId].qty, 10) || 0;
+        if (qty > 0 && !document.getElementById('qty_' + menuId)) {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'qty[' + menuId + ']';
+            hidden.value = String(qty);
+            form.appendChild(hidden);
+        }
+    });
+
+    localStorage.removeItem(STORAGE_KEY);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    hitungTotal();
+    document.querySelectorAll('.qty-input').forEach(inp => {
+        inp.addEventListener('input', function() {
+            const menuId = this.id.replace('qty_', '');
+            const qty = Math.max(0, parseInt(this.value, 10) || 0);
+            this.value = qty;
+            const cart = getSavedCart();
+            if (qty > 0) {
+                cart[menuId] = {
+                    qty: qty,
+                    harga: parseInt(this.dataset.harga, 10) || 0
+                };
+            } else {
+                delete cart[menuId];
+            }
+            saveCart(cart);
+            hitungTotal();
+        });
+    });
+});
 </script>
 </body>
 </html>
