@@ -9,4 +9,3 @@ RUN a2enmod rewrite \
     && chmod -R 755 /var/www/html/
 
 CMD ["apache2-foreground"]
-```[cite: 10]
