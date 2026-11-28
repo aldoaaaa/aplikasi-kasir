@@ -1,11 +1,7 @@
-FROM php:8.2-apache
+FROM dunglas/frankenphp:php8.4
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN install-php-extensions pdo_mysql
 
-COPY . /var/www/html/
+COPY . /app/
 
-RUN a2enmod rewrite \
-    && chown -R www-data:www-data /var/www/html/ \
-    && chmod -R 755 /var/www/html/
-
-CMD ["apache2-foreground"]
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
